@@ -1,27 +1,29 @@
 import kotlin.random.Random
 
+const val SPECIAL_CHARS = "'-!\"#\$%&()*,./:;?@[]^_`{|}~+<=>"
+
 fun main() {
-    //println("Enter text1:")
-    val text1 = "Peach cake with brown sugar icing"
-    //println("Enter text2:")
-    val text2 = "Dancin' is what to do"
-    //println("Enter password length:")
-    val length = 20
+    println("Enter text1:")
+    val text1 = readln()
+    println("Enter text2:")
+    val text2 = readln()
+    println("Enter password length:")
+    val length = readln().toInt()
     println("Generated passwords:")
     for (i in 1..5) {
         val password = generatePassword(text1, text2, length)
         println("$i) $password")
     }
     //Testing:
-    generatePasswordTest(text1, text2)
+    generatePasswordTest(text1, text2, length)
 }
 
 fun generatePassword(string1: String, string2: String, length: Int = 16): String {
-    val list = combineStrings(string1, string2)
+    val list = combinedStrings(string1, string2)
     val remainingChars = trimList(list, length)
     if (!containsDigit(list)) addDigits(list)
     if (!containsUpperCase(list)) addUpperCase(list)
-    return joinList(list, remainingChars)
+    return joinedList(list, remainingChars)
 }
 
 fun randomUpperCaseLetter(): Char = Random.nextInt(65, 91).toChar()
@@ -30,7 +32,7 @@ fun randomLowerCaseLetter(): Char = Random.nextInt(97, 123).toChar()
 
 fun randomDigit(): Char = Random.nextInt(48, 58).toChar()
 
-fun randomSpecialChar(): Char = "'-!\"#\$%&()*,./:;?@[]^_`{|}~+<=>".random()
+fun randomSpecialChar(): Char = SPECIAL_CHARS.random()
 
 fun randomChar(): Char {
     return when (Random.nextInt(0, 4)) {
@@ -41,7 +43,7 @@ fun randomChar(): Char {
     }
 }
 
-fun combineStrings(string1: String, string2: String): MutableList<String> {
+fun combinedStrings(string1: String, string2: String): MutableList<String> {
     val split1 = string1.split(" ").toMutableList()
     val split2 = string2.split(" ")
     split1.addAll(split2)
@@ -62,16 +64,16 @@ fun trimList(list: MutableList<String>, length: Int): Int {
     return length - len
 }
 
-fun joinList(list: MutableList<String>, remaining: Int): String {
+fun joinedList(list: MutableList<String>, remaining: Int): String {
     var newString = ""
-    for (i in list.indices) newString += list[i] + randomSpecialChar()
+    for (i in list.indices) newString += list[i] + addChar(newString, list)
     if (remaining == -1) newString = newString.dropLast(1)
     else if (remaining > 0) {
         for (i in 1..remaining) {
-            if (!containsDigit(newString)) newString += randomDigit()
-            else if (!containsUpperCase(newString)) newString = randomUpperCaseLetter() + newString
-            else if (!containsLowerCase(newString)) newString = randomLowerCaseLetter() + newString
-            else newString += randomChar()
+            when (Random.nextBoolean()) {
+                true -> newString += addChar(newString)
+                else -> newString = addChar(newString) + newString
+            }
         }
     }
     return newString
@@ -112,13 +114,10 @@ fun containsLowerCase(string: String): Boolean {
 
 fun containsSpecialChar(string: String): Boolean {
     var containsSpecialChar = false
-    val spChars = "'-!\"#\$%&()*,./:;?@[]^_`{|}~+<=>"
     for (char in string) {
-        for (i in spChars) {
-            if (i == char) {
-                containsSpecialChar = true
-                break
-            }
+        if (char in SPECIAL_CHARS) {
+            containsSpecialChar = true
+            break
         }
     }
     return containsSpecialChar
@@ -171,12 +170,73 @@ fun addUpperCase(string: String): String {
     return newString
 }
 
-fun generatePasswordTest(string1: String, string2: String) {
+fun addLowerCase(list: MutableList<String>) {
+    TODO()
+}
+
+fun addLowerCase(string: String): String {
+    TODO()
+}
+
+fun generatePasswordTest(string1: String, string2: String, length: Int) {
     println("\n__________Test__________")
     for (i in 0..10) {
-        val password = generatePassword(string1, string2)
+        val password = generatePassword(string1, string2, length)
         println(password)
-        println("d = ${containsDigit(password)}, u = ${containsUpperCase(password)}, l = ${containsLowerCase(password)}, s = ${
-            containsSpecialChar(password)}")
+        println(
+            "d = ${containsDigit(password)}, u = ${containsUpperCase(password)}, l = ${containsLowerCase(password)}, s = ${
+                containsSpecialChar(password)
+            }"
+        )
+    }
+}
+
+fun containsSpecialChar(list: MutableList<String>): Boolean {
+    var containsSpecialChar = false
+    for (string in list) {
+        for (char in string) {
+            if (char in SPECIAL_CHARS) {
+                containsSpecialChar = true
+                break
+            }
+        }
+        if (containsSpecialChar) break
+    }
+    return containsSpecialChar
+}
+
+fun containsLowerCase(list: MutableList<String>): Boolean {
+    var containsLowerCase = false
+    for (string in list) {
+        for (char in string) {
+            if (char.isLowerCase()) {
+                containsLowerCase = true
+                break
+            }
+        }
+        if (containsLowerCase) break
+    }
+    return containsLowerCase
+}
+
+fun addChar(string: String): Char {
+    return if (!containsSpecialChar(string)) randomSpecialChar()
+    else if (!containsDigit(string)) randomDigit()
+    else if (!containsUpperCase(string)) randomUpperCaseLetter()
+    else if (!containsLowerCase(string)) randomLowerCaseLetter()
+    else randomChar()
+}
+
+fun addChar(string: String, list: MutableList<String>): Char {
+    return if (!(containsSpecialChar(string) || containsSpecialChar(list))) randomSpecialChar()
+    else if (!(containsDigit(string) || containsDigit(list))) randomDigit()
+    else if (!(containsUpperCase(string) || containsUpperCase(list))) randomUpperCaseLetter()
+    else if (!(containsLowerCase(string) || containsLowerCase(list))) randomLowerCaseLetter()
+    else randomChar()
+}
+
+fun trimmedString(list: MutableList<String>) {
+    if (list.size == 1) {
+        TODO()
     }
 }
