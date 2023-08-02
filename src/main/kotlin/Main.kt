@@ -14,8 +14,7 @@ fun main() {
         val password = generatePassword(text1, text2, length)
         println("$i) $password")
     }
-    //Testing:
-    generatePasswordTest(text1, text2, length)
+    test(text1, text2, length)
 }
 
 fun generatePassword(string1: String, string2: String, length: Int = 16): String {
@@ -23,24 +22,8 @@ fun generatePassword(string1: String, string2: String, length: Int = 16): String
     val remainingChars = trimList(list, length)
     if (!containsDigit(list)) addDigits(list)
     if (!containsUpperCase(list)) addUpperCase(list)
+    if (!containsLowerCase(list)) addLowerCase(list)
     return joinedList(list, remainingChars)
-}
-
-fun randomUpperCaseLetter(): Char = Random.nextInt(65, 91).toChar()
-
-fun randomLowerCaseLetter(): Char = Random.nextInt(97, 123).toChar()
-
-fun randomDigit(): Char = Random.nextInt(48, 58).toChar()
-
-fun randomSpecialChar(): Char = SPECIAL_CHARS.random()
-
-fun randomChar(): Char {
-    return when (Random.nextInt(0, 4)) {
-        0 -> randomDigit()
-        1 -> randomUpperCaseLetter()
-        2 -> randomLowerCaseLetter()
-        else -> randomSpecialChar()
-    }
 }
 
 fun combinedStrings(string1: String, string2: String): MutableList<String> {
@@ -90,39 +73,6 @@ fun containsDigit(string: String): Boolean {
     return containsDigit
 }
 
-fun containsUpperCase(string: String): Boolean {
-    var containsUpperCase = false
-    for (char in string) {
-        if (char.isUpperCase()) {
-            containsUpperCase = true
-            break
-        }
-    }
-    return containsUpperCase
-}
-
-fun containsLowerCase(string: String): Boolean {
-    var containsLowerCase = false
-    for (char in string) {
-        if (char.isLowerCase()) {
-            containsLowerCase = true
-            break
-        }
-    }
-    return containsLowerCase
-}
-
-fun containsSpecialChar(string: String): Boolean {
-    var containsSpecialChar = false
-    for (char in string) {
-        if (char in SPECIAL_CHARS) {
-            containsSpecialChar = true
-            break
-        }
-    }
-    return containsSpecialChar
-}
-
 fun containsDigit(list: MutableList<String>): Boolean {
     var containsDigit = false
     for (string in list) {
@@ -137,11 +87,15 @@ fun containsDigit(list: MutableList<String>): Boolean {
     return containsDigit
 }
 
-fun addDigits(list: MutableList<String>) {
-    val replacements = mapOf('b' to '6', 'q' to '9', 'S' to '5', 'l' to '1', 'O' to '0')
-    for ((oldChar, newChar) in replacements) {
-        list.replaceAll { it.replace(oldChar, newChar, true) }
+fun containsUpperCase(string: String): Boolean {
+    var containsUpperCase = false
+    for (char in string) {
+        if (char.isUpperCase()) {
+            containsUpperCase = true
+            break
+        }
     }
+    return containsUpperCase
 }
 
 fun containsUpperCase(list: MutableList<String>): Boolean {
@@ -158,37 +112,40 @@ fun containsUpperCase(list: MutableList<String>): Boolean {
     return containsUpperCase
 }
 
-fun addUpperCase(list: MutableList<String>) {
-    list.replaceAll { addUpperCase(it) }
-}
-
-fun addUpperCase(string: String): String {
-    var newString = ""
+fun containsLowerCase(string: String): Boolean {
+    var containsLowerCase = false
     for (char in string) {
-        newString += if (Random.nextBoolean()) char.uppercase() else char
+        if (char.isLowerCase()) {
+            containsLowerCase = true
+            break
+        }
     }
-    return newString
+    return containsLowerCase
 }
 
-fun addLowerCase(list: MutableList<String>) {
-    TODO()
-}
-
-fun addLowerCase(string: String): String {
-    TODO()
-}
-
-fun generatePasswordTest(string1: String, string2: String, length: Int) {
-    println("\n__________Test__________")
-    for (i in 0..10) {
-        val password = generatePassword(string1, string2, length)
-        println(password)
-        println(
-            "d = ${containsDigit(password)}, u = ${containsUpperCase(password)}, l = ${containsLowerCase(password)}, s = ${
-                containsSpecialChar(password)
-            }"
-        )
+fun containsLowerCase(list: MutableList<String>): Boolean {
+    var containsLowerCase = false
+    for (string in list) {
+        for (char in string) {
+            if (char.isLowerCase()) {
+                containsLowerCase = true
+                break
+            }
+        }
+        if (containsLowerCase) break
     }
+    return containsLowerCase
+}
+
+fun containsSpecialChar(string: String): Boolean {
+    var containsSpecialChar = false
+    for (char in string) {
+        if (char in SPECIAL_CHARS) {
+            containsSpecialChar = true
+            break
+        }
+    }
+    return containsSpecialChar
 }
 
 fun containsSpecialChar(list: MutableList<String>): Boolean {
@@ -205,18 +162,27 @@ fun containsSpecialChar(list: MutableList<String>): Boolean {
     return containsSpecialChar
 }
 
-fun containsLowerCase(list: MutableList<String>): Boolean {
-    var containsLowerCase = false
-    for (string in list) {
-        for (char in string) {
-            if (char.isLowerCase()) {
-                containsLowerCase = true
-                break
-            }
-        }
-        if (containsLowerCase) break
+fun addDigits(list: MutableList<String>) {
+    val replacements = mapOf('b' to '6', 'q' to '9', 'S' to '5', 'l' to '1', 'O' to '0')
+    for ((oldChar, newChar) in replacements) {
+        list.replaceAll { it.replace(oldChar, newChar, true) }
     }
-    return containsLowerCase
+}
+
+fun addUpperCase(list: MutableList<String>) {
+    list.replaceAll {
+        var temp = ""
+        for (char in it) temp += if (Random.nextBoolean()) char.uppercase() else char
+        temp
+    }
+}
+
+fun addLowerCase(list: MutableList<String>) {
+    list.replaceAll{
+        var temp = ""
+        for (char in it) temp += if (Random.nextBoolean()) char.lowercase() else char
+        temp
+    }
 }
 
 fun addChar(string: String): Char {
@@ -235,8 +201,31 @@ fun addChar(string: String, list: MutableList<String>): Char {
     else randomChar()
 }
 
-fun trimmedString(list: MutableList<String>) {
-    if (list.size == 1) {
-        TODO()
+fun randomDigit(): Char = Random.nextInt(48, 58).toChar()
+
+fun randomUpperCaseLetter(): Char = Random.nextInt(65, 91).toChar()
+
+fun randomLowerCaseLetter(): Char = Random.nextInt(97, 123).toChar()
+
+fun randomSpecialChar(): Char = SPECIAL_CHARS.random()
+
+fun randomChar(): Char {
+    return when (Random.nextInt(0, 4)) {
+        0 -> randomDigit()
+        1 -> randomUpperCaseLetter()
+        2 -> randomLowerCaseLetter()
+        else -> randomSpecialChar()
+    }
+}
+
+fun test(string1: String, string2: String, length: Int) {
+    println("\n__________Test__________")
+    for (i in 0..10) {
+        val password = generatePassword(string1, string2, length)
+        println(password)
+        println(
+            "d = ${containsDigit(password)}, u = ${containsUpperCase(password)}, l = ${containsLowerCase(password)}, s = ${
+                containsSpecialChar(password)}"
+        )
     }
 }
