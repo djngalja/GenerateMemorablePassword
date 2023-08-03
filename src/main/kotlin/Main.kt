@@ -27,23 +27,41 @@ fun generatePassword(string1: String, string2: String, length: Int = 16): String
 }
 
 fun combinedStrings(string1: String, string2: String): MutableList<String> {
-    val split1 = string1.split(" ").toMutableList()
-    val split2 = string2.split(" ")
-    split1.addAll(split2)
-    split1.shuffle()
-    return split1
+    val list: MutableList<String>
+    val list1 = string1.split(" ").toMutableList()
+    val list2 = string2.split(" ").toMutableList()
+    list = if (string1.isEmpty()) list2
+    else if (string2.isEmpty()) list1
+    else {
+        list1.addAll(list2)
+        list1
+    }
+    list.shuffle()
+    return list
 }
 
 fun trimList(list: MutableList<String>, length: Int): Int {
-    val newList = mutableListOf<String>()
+    val tempList = mutableListOf<String>()
     var len = 0
     for (string in list) {
         if (len + string.length <= length) {
             len += string.length + 1
-            newList.add(string)
+            tempList.add(string)
         }
     }
-    list.retainAll(newList)
+    if (list.isNotEmpty() && tempList.isEmpty()) {
+        var count = 0
+        if (!containsDigit(list[0])) count++
+        if (!containsSpecialChar(list[0])) count++
+        if (!containsUpperCase(list[0])) count++
+        if (!containsLowerCase(list[0])) count++
+        val n = list[0].length - length + count
+        val tempString = list[0].dropLast(n)
+        tempList.add(tempString)
+        len = tempString.length
+    }
+    list.clear()
+    list.addAll(tempList)
     return length - len
 }
 
