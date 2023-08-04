@@ -84,6 +84,20 @@ fun joinedList(list: MutableList<String>, length: Int): String {
     return newString
 }
 
+fun containsLetter(list: MutableList<String>): Boolean {
+    var containsLetter = false
+    for (string in list) {
+        for (char in string) {
+            if (char.isLetter()) {
+                containsLetter = true
+                break
+            }
+        }
+        if (containsLetter) break
+    }
+    return containsLetter
+}
+
 fun containsDigit(string: String): Boolean {
     var containsDigit = false
     for (char in string) {
@@ -115,28 +129,10 @@ fun containsUpperCase(string: String): Boolean {
     return containsUpperCase
 }
 
-fun containsLetter(list: MutableList<String>): Boolean {
-    var containsLetter = false
-    for (string in list) {
-        for (char in string) {
-            if (char.isLetter()) {
-                containsLetter = true
-                break
-            }
-        }
-        if (containsLetter) break
-    }
-    return containsLetter
-}
 fun containsUpperCase(list: MutableList<String>): Boolean {
     var containsUpperCase = false
     for (string in list) {
-        for (char in string) {
-            if (char.isUpperCase()) {
-                containsUpperCase = true
-                break
-            }
-        }
+        containsUpperCase = containsUpperCase(string)
         if (containsUpperCase) break
     }
     return containsUpperCase
@@ -156,12 +152,7 @@ fun containsLowerCase(string: String): Boolean {
 fun containsLowerCase(list: MutableList<String>): Boolean {
     var containsLowerCase = false
     for (string in list) {
-        for (char in string) {
-            if (char.isLowerCase()) {
-                containsLowerCase = true
-                break
-            }
-        }
+        containsLowerCase = containsLowerCase(string)
         if (containsLowerCase) break
     }
     return containsLowerCase
@@ -181,12 +172,7 @@ fun containsSpecialChar(string: String): Boolean {
 fun containsSpecialChar(list: MutableList<String>): Boolean {
     var containsSpecialChar = false
     for (string in list) {
-        for (char in string) {
-            if (char in SPECIAL_CHARS) {
-                containsSpecialChar = true
-                break
-            }
-        }
+        containsSpecialChar = containsSpecialChar(string)
         if (containsSpecialChar) break
     }
     return containsSpecialChar
@@ -194,8 +180,10 @@ fun containsSpecialChar(list: MutableList<String>): Boolean {
 
 fun addDigitsOrLetters(list: MutableList<String>, addLetters: Boolean = false) {
     val replacements = mapOf('b' to '6', 'q' to '9', 'S' to '5', 'l' to '1', 'O' to '0')
-    for ((oldChar, newChar) in replacements)
+    for ((oldChar, newChar) in replacements) {
         list.replaceAll { it.replace(oldChar, newChar, true) }
+        if (containsDigit(list)) break
+    }
     if (addLetters)
         for ((newChar, oldChar) in replacements)
             list.replaceAll { it.replace(oldChar, newChar, true)}
