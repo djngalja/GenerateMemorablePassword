@@ -43,39 +43,30 @@ fun combinedStrings(string1: String, string2: String): MutableList<String> {
 
 fun trimList(list: MutableList<String>, length: Int) {
     val tempList = mutableListOf<String>()
-    var len = 0
-    for (string in list) {
-        if (len + string.length <= length) {
-            len += string.length + 1
-            tempList.add(string)
-        }
-    }
-    if (list.isNotEmpty() && tempList.isEmpty()) {
-        var count = 0
-        if (!containsDigit(list[0])) count++
-        if (!containsSpecialChar(list[0])) count++
-        if (!containsUpperCase(list[0])) count++
-        if (!containsLowerCase(list[0])) count++
-        val n = list[0].length - length + count
-        val tempString = list[0].dropLast(n)
-        tempList.add(tempString)
-    }
-    else if (length - len > 3) {
-        val tempList2 = list.filter {it !in tempList}.toMutableList()
-        if (tempList2.isNotEmpty()) {
-            var count = 0
-            if (!(containsDigit(tempList) || containsDigit(tempList2[0]))) count++
-            if (!(containsSpecialChar(tempList) || containsSpecialChar(tempList2[0]))) count++
-            if (!(containsUpperCase(tempList) || containsUpperCase(tempList2[0]))) count++
-            if (!(containsLowerCase(tempList) || containsLowerCase(tempList2[0]))) count++
-            val n = tempList2[0].length - length + len + count
-            val tempString = tempList2[0].dropLast(n)
-            tempList.add(tempString)
-        }
-    }
-    println(tempList)
+    copyList(list, tempList, length)
     list.clear()
     list.addAll(tempList)
+}
+
+fun copyList(
+    list: MutableList<String>,
+    tempList: MutableList<String>,
+    length: Int
+) {
+    var tempLength = 0
+    for (string in list) {
+        tempLength += string.length + 1
+        if (tempLength < length) tempList.add(string)
+        else if (tempLength == length) {
+            tempList.add(string)
+            break
+        } else { // tempLength > length
+            val newString = string.dropLast(tempLength - length)
+            tempList.add(newString)
+            break
+        }
+    }
+    if (tempLength < length) copyList(list, tempList, length - tempLength)
 }
 
 fun joinedList(list: MutableList<String>, length: Int): String {
@@ -107,12 +98,7 @@ fun containsDigit(string: String): Boolean {
 fun containsDigit(list: MutableList<String>): Boolean {
     var containsDigit = false
     for (string in list) {
-        for (char in string) {
-            if (char.isDigit()) {
-                containsDigit = true
-                break
-            }
-        }
+        containsDigit = containsDigit(string)
         if (containsDigit) break
     }
     return containsDigit
