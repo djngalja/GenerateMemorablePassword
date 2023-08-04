@@ -19,11 +19,12 @@ fun main() {
 
 fun generatePassword(string1: String, string2: String, length: Int = 16): String {
     val list = combinedStrings(string1, string2)
-    val remainingChars = trimList(list, length)
-    if (!containsDigit(list)) addDigits(list)
+    trimList(list, length)
+    if (!containsDigit(list)) addDigitsOrLetters(list)
+    if (!containsLetter(list)) addDigitsOrLetters(list, true)
     if (!containsUpperCase(list)) addUpperCase(list)
     if (!containsLowerCase(list)) addLowerCase(list)
-    return joinedList(list, remainingChars)
+    return joinedList(list, length)
 }
 
 fun combinedStrings(string1: String, string2: String): MutableList<String> {
@@ -40,7 +41,7 @@ fun combinedStrings(string1: String, string2: String): MutableList<String> {
     return list
 }
 
-fun trimList(list: MutableList<String>, length: Int): Int {
+fun trimList(list: MutableList<String>, length: Int) {
     val tempList = mutableListOf<String>()
     var len = 0
     for (string in list) {
@@ -58,19 +59,31 @@ fun trimList(list: MutableList<String>, length: Int): Int {
         val n = list[0].length - length + count
         val tempString = list[0].dropLast(n)
         tempList.add(tempString)
-        len = tempString.length
     }
+    else if (length - len > 3) {
+        val tempList2 = list.filter {it !in tempList}.toMutableList()
+        if (tempList2.isNotEmpty()) {
+            var count = 0
+            if (!(containsDigit(tempList) || containsDigit(tempList2[0]))) count++
+            if (!(containsSpecialChar(tempList) || containsSpecialChar(tempList2[0]))) count++
+            if (!(containsUpperCase(tempList) || containsUpperCase(tempList2[0]))) count++
+            if (!(containsLowerCase(tempList) || containsLowerCase(tempList2[0]))) count++
+            val n = tempList2[0].length - length + len + count
+            val tempString = tempList2[0].dropLast(n)
+            tempList.add(tempString)
+        }
+    }
+    println(tempList)
     list.clear()
     list.addAll(tempList)
-    return length - len
 }
 
-fun joinedList(list: MutableList<String>, remaining: Int): String {
+fun joinedList(list: MutableList<String>, length: Int): String {
     var newString = ""
     for (i in list.indices) newString += list[i] + addChar(newString, list)
-    if (remaining == -1) newString = newString.dropLast(1)
-    else if (remaining > 0) {
-        for (i in 1..remaining) {
+    if (newString.length > length) newString = newString.dropLast(1)
+    else if (newString.length < length) {
+        while (newString.length < length) {
             when (Random.nextBoolean()) {
                 true -> newString += addChar(newString)
                 else -> newString = addChar(newString) + newString
@@ -116,6 +129,19 @@ fun containsUpperCase(string: String): Boolean {
     return containsUpperCase
 }
 
+fun containsLetter(list: MutableList<String>): Boolean {
+    var containsLetter = false
+    for (string in list) {
+        for (char in string) {
+            if (char.isLetter()) {
+                containsLetter = true
+                break
+            }
+        }
+        if (containsLetter) break
+    }
+    return containsLetter
+}
 fun containsUpperCase(list: MutableList<String>): Boolean {
     var containsUpperCase = false
     for (string in list) {
@@ -180,11 +206,13 @@ fun containsSpecialChar(list: MutableList<String>): Boolean {
     return containsSpecialChar
 }
 
-fun addDigits(list: MutableList<String>) {
+fun addDigitsOrLetters(list: MutableList<String>, addLetters: Boolean = false) {
     val replacements = mapOf('b' to '6', 'q' to '9', 'S' to '5', 'l' to '1', 'O' to '0')
-    for ((oldChar, newChar) in replacements) {
+    for ((oldChar, newChar) in replacements)
         list.replaceAll { it.replace(oldChar, newChar, true) }
-    }
+    if (addLetters)
+        for ((newChar, oldChar) in replacements)
+            list.replaceAll { it.replace(oldChar, newChar, true)}
 }
 
 fun addUpperCase(list: MutableList<String>) {
