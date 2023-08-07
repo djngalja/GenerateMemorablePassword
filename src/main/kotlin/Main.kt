@@ -24,7 +24,8 @@ fun generatePassword(string1: String, string2: String, length: Int): String {
     if (!list.containsLetter()) addDigitsOrLetters(list, true)
     if (!list.containsUpperCase()) addLowerOrUpperCase(list, true)
     if (!list.containsLowerCase()) addLowerOrUpperCase(list)
-    return joinedList(list)
+    val password = joinedList(list)
+    return finalCheck(password)
 }
 
 fun combinedStrings(string1: String, string2: String): MutableList<String> {
@@ -156,6 +157,34 @@ fun addChar(string: String, list: MutableList<String>): Char {
     else if (!(string.containsUpperCase() || list.containsUpperCase())) randomUpperCaseLetter()
     else if (!(string.containsLowerCase() || list.containsLowerCase())) randomLowerCaseLetter()
     else randomChar()
+}
+
+fun String.replaceChar(char: Char): String {
+    val builder = StringBuilder(this)
+    var digit = 0
+    var lLetter = 0
+    var uLetter = 0
+    var sChar = 0
+    for (i in this.indices) {
+        if (this[i].isDigit()) digit++
+        else if (this[i].isLowerCase()) lLetter++
+        else if (this[i].isUpperCase()) uLetter++
+        else sChar++
+        if (digit == 2 || lLetter == 2 || uLetter == 2 || sChar == 2) {
+            builder[i] = char
+            break
+        }
+    }
+    return builder.toString()
+}
+
+fun finalCheck(string: String): String {
+    var newString = string
+    if (!newString.containsDigit()) newString = newString.replaceChar(randomDigit())
+    if (!newString.containsLowerCase()) newString = newString.replaceChar(randomLowerCaseLetter())
+    if (!newString.containsUpperCase()) newString = newString.replaceChar(randomUpperCaseLetter())
+    if (!newString.containsSpecialChar()) newString = newString.replaceChar(randomSpecialChar())
+    return newString
 }
 
 fun Random.nextBoolean(p: Double) = nextDouble() < p
