@@ -1,6 +1,10 @@
+/*
+* GENERATE A STRONG AND EASY-TO-REMEMBER PASSWORD.
+*/
+
 import kotlin.random.Random
 
-const val SPECIAL_CHARS = "'-!\"#\$%&()*,./:;?@[]^_`{|}~+<=>"
+const val SPECIAL_CHARS = "'-!\"#\$%&()*,./:;?@[]^_`{|}~+<=>" // special characters
 
 fun main() {
     println("Enter text1:")
@@ -77,7 +81,7 @@ fun joinedList(list: MutableList<String>): String {
 }
 
 /*
-* Returns `true` if this String is not a number.
+* Returns `true` if this string is not a number.
 * A String is considered to be a number if it contains only digits.
 */
 fun String.isNotNumber(): Boolean {
@@ -85,46 +89,75 @@ fun String.isNotNumber(): Boolean {
     return false
 }
 
+/*
+* Returns `true` if this mutable list of type String contains at least 1 letter.
+*/
 fun MutableList<String>.containsLetter(): Boolean {
     for (string in this) for (char in string) if (char.isLetter()) return true
     return false
 }
 
+/*
+* Returns `true` if this string contains at least 1 digit.
+*/
 fun String.containsDigit(): Boolean {
     for (char in this) if (char.isDigit()) return true
     return false
 }
 
+/*
+* Returns `true` if this mutable list of type String contains at least 1 digit.
+*/
 fun MutableList<String>.containsDigit(): Boolean {
     for (string in this) if (string.containsDigit()) return true
     return false
 }
 
+/*
+* Returns `true` if this string contains at least 1 upper case letter.
+*/
 fun String.containsUpperCase(): Boolean {
     for (char in this) if (char.isUpperCase()) return true
     return false
 }
 
+/*
+* Returns `true` if this mutable list of type String contains at least 1 upper case letter.
+*/
 fun MutableList<String>.containsUpperCase(): Boolean {
     for (string in this) if (string.containsUpperCase()) return true
     return false
 }
 
+/*
+* Returns `true` if this string contains at least 1 lower case letter.
+*/
 fun String.containsLowerCase(): Boolean {
     for (char in this) if (char.isLowerCase()) return true
     return false
 }
 
+/*
+* Returns `true` if this mutable list of type String contains at least 1 lower case letter.
+*/
 fun MutableList<String>.containsLowerCase(): Boolean {
     for (string in this) if (string.containsLowerCase()) return true
     return false
 }
 
+/*
+* Returns `true` if this string contains at least 1 special character.
+* A character is considered to be special if it can be found in the SPECIAL_CHARS constant.
+*/
 fun String.containsSpecialChar(): Boolean {
     for (char in this) if (char in SPECIAL_CHARS) return true
     return false
 }
 
+/*
+* Returns `true` if this mutable list of type String contains at least 1 special character.
+* A character is considered to be special if it can be found in the SPECIAL_CHARS constant.
+*/
 fun MutableList<String>.containsSpecialChar(): Boolean {
     for (string in this) if (string.containsSpecialChar()) return true
     return false
@@ -187,16 +220,37 @@ fun finalCheck(string: String): String {
     return newString
 }
 
+/*
+* Generates `true` with the probability p.
+*/
 fun Random.nextBoolean(p: Double) = nextDouble() < p
 
+/*
+* Returns a random digit of type Char.
+*/
 fun randomDigit(): Char = Random.nextInt(48, 58).toChar()
 
+/*
+* Returns a random upper case letter.
+*/
 fun randomUpperCaseLetter(): Char = Random.nextInt(65, 91).toChar()
 
+/*
+* Returns a random lower case letter.
+*/
 fun randomLowerCaseLetter(): Char = Random.nextInt(97, 123).toChar()
 
+/*
+* Returns a random special character.
+* A character is considered to be special if it can be found in the SPECIAL_CHARS constant.
+*/
 fun randomSpecialChar(): Char = SPECIAL_CHARS.random()
 
+/*
+* Returns a random char.
+* It can be a digit (of type Char), a special character or a letter.
+* A character is considered to be special if it can be found in the SPECIAL_CHARS constant.
+*/
 fun randomChar(): Char {
     return when (Random.nextInt(0, 4)) {
         0 -> randomDigit()
