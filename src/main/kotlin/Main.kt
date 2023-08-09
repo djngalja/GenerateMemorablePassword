@@ -163,6 +163,12 @@ fun MutableList<String>.containsSpecialChar(): Boolean {
     return false
 }
 
+/*
+* If `addLetters` is set to `true`, replaces all occurrences of numbers 6, 9, 5, 1 and 0 with the letters b, q, s, l and o respectively, regardless of case.
+* If there are no such numbers, no changes are made.
+* Otherwise, a reverse algorithm is applied to  replace the letters with numbers.
+* Letters are replaced only once, e.g. all occurrences of 'q' are replaced with the number 9, and no other changes are made.
+*/
 fun addDigitsOrLetters(list: MutableList<String>, addLetters: Boolean = false) {
     val replacements = mapOf('b' to '6', 'q' to '9', 'S' to '5', 'l' to '1', 'O' to '0')
     for ((oldChar, newChar) in replacements) {
@@ -174,6 +180,10 @@ fun addDigitsOrLetters(list: MutableList<String>, addLetters: Boolean = false) {
             list.replaceAll { it.replace(oldChar, newChar, true)}
 }
 
+/*
+* If `upperCase` is set to `true`, randomly replaces lower case letters in the list with respective upper case letters with the probability 1/3.
+* Otherwise, randomly replaces upper case letters in the list with respective lower case letters with the probability 1/3.
+*/
 fun addLowerOrUpperCase(list: MutableList<String>, upperCase: Boolean = false) {
     list.replaceAll {
         var tempString = ""
@@ -184,6 +194,13 @@ fun addLowerOrUpperCase(list: MutableList<String>, upperCase: Boolean = false) {
     }
 }
 
+/*
+* Returns a random special character if the string does not contain special characters.
+* Returns a random digit if the string does not contain any digits.
+* Returns a random upper case letter if the string does not contain any upper case letters.
+* Returns a random lower case letter if the string does not contain any lower case letters.
+* Returns a random character of one of the mentioned above types if the string contains characters of all the 4 types.
+*/
 fun addChar(string: String, list: MutableList<String>): Char {
     return if (!(string.containsSpecialChar() || list.containsSpecialChar())) randomSpecialChar()
     else if (!(string.containsDigit() || list.containsDigit())) randomDigit()
@@ -192,6 +209,10 @@ fun addChar(string: String, list: MutableList<String>): Char {
     else randomChar()
 }
 
+/*
+* Replaces the 2nd digit, the 2nd lower or upper case letter or the 2nd special character (depending on whichever comes first) in the string with the given character.
+* Returns an unchanged string if there are no repeating characters of the same type.
+*/
 fun String.replaceChar(char: Char): String {
     val builder = StringBuilder(this)
     var digit = 0
@@ -211,6 +232,12 @@ fun String.replaceChar(char: Char): String {
     return builder.toString()
 }
 
+/*
+* Checks whether the string contains at least 1 digit.
+* If not, replaces the 1st repeating character (the 2nd special character, the 2nd lower case letter or the 2nd upper case letter) with a random digit.
+* The same algorithm repeated 3 more times for lower and upper case letters, as well as special characters.
+* Returns an unchanged string, if the original string contains all 4 types of characters.
+*/
 fun finalCheck(string: String): String {
     var newString = string
     if (!newString.containsDigit()) newString = newString.replaceChar(randomDigit())
