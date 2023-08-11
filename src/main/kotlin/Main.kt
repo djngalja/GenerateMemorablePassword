@@ -21,9 +21,12 @@ fun main() {
     }
 }
 
+/*
+* Returns a password of type String generated using 2 strings and an integer (password length).
+*/
 fun generatePassword(string1: String, string2: String, length: Int): String {
     val list = combinedStrings(string1, string2)
-    trimList(list, length)
+    resizeList(list, length)
     if (!list.containsDigit()) addDigitsOrLetters(list)
     if (!list.containsLetter()) addDigitsOrLetters(list, true)
     if (!list.containsUpperCase()) addLowerOrUpperCase(list, true)
@@ -32,6 +35,9 @@ fun generatePassword(string1: String, string2: String, length: Int): String {
     return finalCheck(password)
 }
 
+/*
+* Splits 2 strings by white spaces and joins the resulting substrings into a mutable list.
+*/
 fun combinedStrings(string1: String, string2: String): MutableList<String> {
     val list: MutableList<String>
     val list1 = string1.split(" ").toMutableList()
@@ -46,13 +52,22 @@ fun combinedStrings(string1: String, string2: String): MutableList<String> {
     return list
 }
 
-fun trimList(list: MutableList<String>, length: Int) {
+/*
+* Changes the size of the mutable list of type String to be joined into a string later so that the length of the resulting string matches the desired length.
+*/
+fun resizeList(list: MutableList<String>, length: Int) {
     val tempList = mutableListOf<String>()
     copyList(list, tempList, length)
     list.clear()
     list.addAll(tempList)
 }
 
+/*
+* Copies strings from the mutable list of type String into a new list.
+* The combined length of all strings in the new list with an additional character in between should match the length.
+* If the original list is shorter, the function is called again.
+* To match the length, the last string in the new list may be trimmed.
+*/
 fun copyList(
     list: MutableList<String>,
     tempList: MutableList<String>,
@@ -74,6 +89,11 @@ fun copyList(
     if (tempLength < length) copyList(list, tempList, length - tempLength)
 }
 
+/*
+* Joins a mutable list of type String into a string.
+* Each string from the list is followed by a random character.
+* Returns the resulting string.
+*/
 fun joinedList(list: MutableList<String>): String {
     var newString = ""
     for (string in list) newString += string + addChar(newString, list)
@@ -274,7 +294,7 @@ fun randomLowerCaseLetter(): Char = Random.nextInt(97, 123).toChar()
 fun randomSpecialChar(): Char = SPECIAL_CHARS.random()
 
 /*
-* Returns a random char.
+* Returns a random Char.
 * It can be a digit (of type Char), a special character or a letter.
 * A character is considered to be special if it can be found in the SPECIAL_CHARS constant.
 */
