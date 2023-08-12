@@ -197,7 +197,7 @@ fun addDigitsOrLetters(list: MutableList<String>, addLetters: Boolean = false) {
     }
     if (addLetters)
         for ((newChar, oldChar) in replacements)
-            list.replaceAll { it.replace(oldChar, newChar, true)}
+            list.replaceAll { it.replace(oldChar, newChar, true) }
 }
 
 /*
